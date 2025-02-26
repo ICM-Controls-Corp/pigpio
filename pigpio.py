@@ -1057,9 +1057,9 @@ def _pigpio_command_ext(sl, cmd, p1, p2, p3, extents):
       sl.s.sendall(ext)
       for x in extents:
          if type(x) == type(""):
-            sl.s.sendall(_b(x))
+            sl.s.sendall(bytes(_b(x)))
          else:
-            sl.s.sendall(x)
+            sl.s.sendall(bytes(x))
       dummy, res = struct.unpack('12sI', sl.s.recv(_SOCK_CMD_LEN))
    return res
 
@@ -1079,9 +1079,9 @@ def _pigpio_command_ext_nolock(sl, cmd, p1, p2, p3, extents):
    sl.s.sendall(ext)
    for x in extents:
       if type(x) == type(""):
-         sl.s.sendall(_b(x))
+         sl.s.sendall(bytes(_b(x)))
       else:
-         sl.s.sendall(x)
+         sl.s.sendall(bytes(x))
    dummy, res = struct.unpack('12sI', sl.s.recv(_SOCK_CMD_LEN))
    return res
 
