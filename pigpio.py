@@ -1051,15 +1051,15 @@ def _pigpio_command_ext(sl, cmd, p1, p2, p3, extents):
         p3:= total size in bytes of following extents
    extents:= additional data blocks
    """
-   ext = bytearray(struct.pack('IIII', cmd, p1, p2, p3))
-   for x in extents:
-      if type(x) == type(""):
-         ext.extend(_b(x))
-      else:
-         ext.extend(x)
-   res = PI_CMD_INTERRUPTED
    with sl.l:
+      res = PI_CMD_INTERRUPTED
+      ext = bytearray(struct.pack('IIII', cmd, p1, p2, p3))
       sl.s.sendall(ext)
+      for x in extents:
+         if type(x) == type(""):
+            sl.s.sendall(_b(x))
+         else:
+            sl.s.sendall(x)
       dummy, res = struct.unpack('12sI', sl.s.recv(_SOCK_CMD_LEN))
    return res
 
@@ -1076,12 +1076,12 @@ def _pigpio_command_ext_nolock(sl, cmd, p1, p2, p3, extents):
    """
    res = PI_CMD_INTERRUPTED
    ext = bytearray(struct.pack('IIII', cmd, p1, p2, p3))
+   sl.s.sendall(ext)
    for x in extents:
       if type(x) == type(""):
-         ext.extend(_b(x))
+         sl.s.sendall(_b(x))
       else:
-         ext.extend(x)
-   sl.s.sendall(ext)
+         sl.s.sendall(x)
    dummy, res = struct.unpack('12sI', sl.s.recv(_SOCK_CMD_LEN))
    return res
 
